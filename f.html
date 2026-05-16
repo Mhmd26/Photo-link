@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>محسّن الصور الاحترافي | AI Image Enhancer</title>
+
+    <!-- خطوط Google: Cairo للعربية و Inter للإنجليزية -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg: #f5f3f8;
+            --surface: #ffffff;
+            --surface2: #f0edf6;
+            --text: #1a1530;
+            --text2: #5a5570;
+            --text3: #8a859a;
+            --primary: #6c3ce0;
+            --primary-light: #8b5cf6;
+            --primary-glow: rgba(108, 60, 224, 0.25);
+            --accent: #f04b7c;
+            --accent2: #3bcf9f;
+            --border: #e2ddf0;
+            --shadow-sm: 0 2px 8px rgba(30, 20, 60, 0.06);
+            --shadow: 0 8px 32px rgba(30, 20, 60, 0.10);
+            --shadow-lg: 0 20px 60px rgba(30, 20, 60, 0.15);
+            --glass: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.5);
+            --slider-track: #d8d0e8;
+            --slider-fill: #6c3ce0;
+            --radius-sm: 10px;
+            --radius: 16px;
+            --radius-lg: 22px;
+            --radius-xl: 28px;
+            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --font-ar: 'Cairo', sans-serif;
+            --font-en: 'Inter', sans-serif;
+        }
+
+        .dark-mode {
+            --bg: #0f0c1a;
+            --surface: #1a1630;
+            --surface2: #221e3a;
+            --text: #e8e4f5;
+            --text2: #b5afcc;
+            --text3: #7d77a0;
+            --primary: #9b7af2;
+            --primary-light: #b49df7;
+            --primary-glow: rgba(155, 122, 242, 0.35);
+            --border: #2d2850;
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.25);
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+            --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.5);
+            --glass: rgba(26, 22, 48, 0.75);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --slider-track: #352e55;
+            --slider-fill: #9b7af2;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-ar);
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            transition: background var(--transition), color var(--transition);
+            background-image:
+                radial-gradient(ellipse at 15% 20%, var(--primary-glow) 0%, transparent 55%),
+                radial-gradient(ellipse at 85% 75%, rgba(240, 75, 124, 0.12) 0%, transparent 55%),
+                radial-gradient(ellipse at 50% 50%, rgba(59, 207, 159, 0.06) 0%, transparent 60%);
+            background-attachment: fixed;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        ::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 10px;
+        }
+
+        .app-container {
+            max-width: 1250px;
+            margin: 0 auto;
+            padding: 16px 20px 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            min-height: 100vh;
+        }
+
+        .app-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 14px;
+            padding: 14px 20px;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            transition: all var(--transition);
+        }
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .logo-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius);
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            color: #fff;
+            box-shadow: 0 6px 20px var(--primary-glow);
+            flex-shrink: 0;
+        }
+        .header-title {
+            font-family: var(--font-ar);
+            font-weight: 800;
+            font-size: 1.25rem;
+            letter-spacing: -0.3px;
+            color: var(--text);
+            line-height: 1.2;
+        }
+        .header-title span {
+            display: block;
+            font-family: var(--font-en);
+            font-weight: 500;
+            font-size: 0.7rem;
+            color: var(--text3);
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            font-family: var(--font-ar);
+            font-weight: 600;
+            font-size: 0.88rem;
+            padding: 10px 18px;
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+            transition: all var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            white-space: nowrap;
+            letter-spacing: -0.2px;
+            outline: none;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn:active {
+            transform: scale(0.96);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: #fff;
+            box-shadow: 0 6px 22px var(--primary-glow);
+            border: none;
+        }
+        .btn-primary:hover {
+            box-shadow: 0 10px 30px var(--primary-glow);
+            transform: translateY(-1px);
+        }
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--border);
+            color: var(--text);
+        }
+        .btn-outline:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        .btn-icon {
+            width: 40px;
+            height: 40px;
+            padding: 0;
+            border-radius: 50%;
+            justify-content: center;
+            font-size: 1.1rem;
+            background: var(--surface2);
+            border: 1.5px solid var(--border);
+            color: var(--text);
+            cursor: pointer;
+            transition: all var(--transition);
+            flex-shrink: 0;
+        }
+        .btn-icon:hover {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+            box-shadow: 0 6px 18px var(--primary-glow);
+        }
+        .btn-icon.active {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+        }
+        .btn-sm {
+            padding: 7px 14px;
+            font-size: 0.78rem;
+            border-radius: 30px;
+        }
+
+        .main-content {
+            display: flex;
+            gap: 18px;
+            flex: 1;
+            align-items: flex-start;
+        }
+
+        .image-area {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+        .drop-zone {
+            background: var(--glass);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 2.5px dashed var(--border);
+            border-radius: var(--radius-xl);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all var(--transition);
+            min-height: 280px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            text-align: center;
+            padding: 30px 20px;
+        }
+        .drop-zone:hover,
+        .drop-zone.drag-over {
+            border-color: var(--primary);
+            background: var(--surface);
+            box-shadow: var(--shadow-lg), 0 0 0 8px var(--primary-glow);
+            transform: translateY(-2px);
+        }
+        .drop-zone.has-image {
+            border-style: solid;
+            border-color: var(--border);
+            background: var(--surface);
+            min-height: auto;
+            padding: 8px;
+            cursor: default;
+            border-radius: var(--radius-lg);
+        }
+        .drop-icon {
+            font-size: 60px;
+            opacity: 0.7;
+            transition: all var(--transition);
+            pointer-events: none;
+        }
+        .drop-zone:hover .drop-icon {
+            transform: translateY(-8px);
+            opacity: 1;
+        }
+        .drop-text {
+            font-family: var(--font-ar);
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: var(--text);
+            pointer-events: none;
+        }
+        .drop-subtext {
+            font-family: var(--font-en);
+            font-size: 0.8rem;
+            color: var(--text3);
+            pointer-events: none;
+        }
+        .drop-zone.has-image .drop-icon,
+        .drop-zone.has-image .drop-text,
+        .drop-zone.has-image .drop-subtext {
+            display: none;
+        }
+        #displayCanvas {
+            display: none;
+            width: 100%;
+            max-height: 55vh;
+            object-fit: contain;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+        .drop-zone.has-image #displayCanvas {
+            display: block;
+        }
+        .image-info-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-en);
+            font-size: 0.75rem;
+            color: var(--text2);
+            padding: 4px 0;
+        }
+        .image-info-bar span {
+            background: var(--surface2);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 500;
+            letter-spacing: 0.2px;
+        }
+        .quality-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: linear-gradient(135deg, var(--accent2), #2cc08a);
+            color: #fff !important;
+            font-weight: 700 !important;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            letter-spacing: 0.3px;
+            box-shadow: 0 4px 14px rgba(59, 207, 159, 0.3);
+            animation: pulse-quality 2.5s ease-in-out infinite;
+        }
+        @keyframes pulse-quality {
+            0%, 100% { box-shadow: 0 4px 14px rgba(59, 207, 159, 0.3); }
+            50% { box-shadow: 0 8px 26px rgba(59, 207, 159, 0.55); }
+        }
+
+        .controls-panel {
+            width: 340px;
+            flex-shrink: 0;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-xl);
+            padding: 18px 16px;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            gap: 13px;
+            transition: all var(--transition);
+            max-height: 75vh;
+            overflow-y: auto;
+            position: sticky;
+            top: 16px;
+        }
+        .panel-title {
+            font-family: var(--font-ar);
+            font-weight: 700;
+            font-size: 1rem;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            letter-spacing: -0.2px;
+            padding-bottom: 4px;
+            border-bottom: 2px solid var(--border);
+        }
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .control-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: var(--font-ar);
+            font-weight: 600;
+            font-size: 0.82rem;
+            color: var(--text);
+            letter-spacing: -0.1px;
+        }
+        .control-value {
+            font-family: var(--font-en);
+            font-weight: 500;
+            font-size: 0.7rem;
+            color: var(--primary);
+            background: var(--surface2);
+            padding: 3px 10px;
+            border-radius: 12px;
+            min-width: 42px;
+            text-align: center;
+        }
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 8px;
+            border-radius: 10px;
+            background: var(--slider-track);
+            outline: none;
+            cursor: pointer;
+            transition: background var(--transition);
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: #fff;
+            border: 3px solid var(--primary);
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+            transition: all var(--transition);
+            cursor: grab;
+        }
+        input[type="range"]::-webkit-slider-thumb:active {
+            cursor: grabbing;
+            transform: scale(1.15);
+            border-color: var(--accent);
+            box-shadow: 0 6px 22px rgba(240, 75, 124, 0.4);
+        }
+        .preset-btns {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 4px;
+        }
+        .preset-btn {
+            font-family: var(--font-ar);
+            font-size: 0.73rem;
+            font-weight: 600;
+            padding: 8px 14px;
+            border-radius: 25px;
+            border: 1.5px solid var(--border);
+            background: var(--surface2);
+            color: var(--text);
+            cursor: pointer;
+            transition: all var(--transition);
+            white-space: nowrap;
+        }
+        .preset-btn:hover {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+        }
+        .preset-btn.active-preset {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+            box-shadow: 0 4px 16px var(--primary-glow);
+        }
+
+        .quality-meter {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            background: var(--surface2);
+            border-radius: var(--radius);
+            font-family: var(--font-ar);
+            font-weight: 600;
+            font-size: 0.78rem;
+            color: var(--text2);
+        }
+        .quality-fill {
+            flex: 1;
+            height: 8px;
+            background: var(--slider-track);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .quality-fill-inner {
+            height: 100%;
+            border-radius: 10px;
+            background: linear-gradient(90deg, var(--accent2), var(--primary), var(--accent));
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        .app-footer {
+            text-align: center;
+            font-size: 0.7rem;
+            color: var(--text3);
+            font-family: var(--font-en);
+            letter-spacing: 0.4px;
+            padding-top: 6px;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(120px);
+            background: var(--surface);
+            color: var(--text);
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-family: var(--font-ar);
+            font-weight: 600;
+            font-size: 0.85rem;
+            box-shadow: var(--shadow-lg);
+            z-index: 1000;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid var(--border);
+            pointer-events: none;
+        }
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        @media (max-width: 850px) {
+            .main-content { flex-direction: column; }
+            .controls-panel {
+                width: 100%;
+                position: static;
+                max-height: none;
+                border-radius: var(--radius-lg);
+                padding: 14px 12px;
+                gap: 10px;
+            }
+            .drop-zone { min-height: 200px; border-radius: var(--radius-lg); }
+            .app-header { padding: 10px 14px; border-radius: var(--radius); }
+            .header-title { font-size: 1rem; }
+            .logo-icon { width: 36px; height: 36px; font-size: 18px; }
+            .btn { padding: 8px 14px; font-size: 0.78rem; }
+            .btn-icon { width: 34px; height: 34px; font-size: 0.95rem; }
+            #displayCanvas { max-height: 38vh; }
+        }
+        @media (max-width: 480px) {
+            .app-container { padding: 8px 10px 20px; gap: 10px; }
+            .drop-zone { min-height: 170px; padding: 20px 12px; border-radius: var(--radius); }
+            .drop-icon { font-size: 44px; }
+            .drop-text { font-size: 0.9rem; }
+            .controls-panel { border-radius: var(--radius); padding: 10px 8px; gap: 8px; }
+            .control-label { font-size: 0.74rem; }
+            .preset-btn { font-size: 0.68rem; padding: 6px 10px; }
+            .btn-sm { padding: 5px 10px; font-size: 0.7rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <header class="app-header">
+        <div class="header-brand">
+            <div class="logo-icon">✨</div>
+            <div class="header-title">
+                محسّن الصور الذكي
+                <span>AI Image Enhancer</span>
+            </div>
+        </div>
+        <div class="header-actions">
+            <button class="btn-icon" id="btnDarkMode" title="الوضع الليلي" aria-label="تبديل الوضع الليلي">🌙</button>
+            <button class="btn btn-outline btn-sm" id="btnCompare" title="مقارنة قبل وبعد">🔍 مقارنة</button>
+            <button class="btn btn-outline btn-sm" id="btnReset" title="إعادة للوضع الأصلي">↺ إعادة ضبط</button>
+            <button class="btn btn-primary btn-sm" id="btnDownloadPNG">📥 تحميل PNG</button>
+        </div>
+    </header>
+
+    <div class="main-content">
+        <div class="image-area">
+            <div class="drop-zone" id="dropZone">
+                <span class="drop-icon">🖼️</span>
+                <span class="drop-text">اسحب وأفلت الصورة هنا</span>
+                <span class="drop-subtext">أو اضغط للاختيار • JPG, PNG, WEBP</span>
+                <input type="file" id="fileInput" accept="image/*" hidden>
+                <canvas id="displayCanvas"></canvas>
+            </div>
+            <div class="image-info-bar" id="imageInfoBar">
+                <span id="infoDimensions">-- × --</span>
+                <span id="infoSize">--</span>
+                <span class="quality-badge" id="qualityBadge">⚡ جودة محسّنة <span id="qualityPercent">0%</span></span>
+            </div>
+            <div class="quality-meter">
+                <span>📊 مستوى التحسين:</span>
+                <div class="quality-fill">
+                    <div class="quality-fill-inner" id="qualityFillBar"></div>
+                </div>
+                <span id="qualityLabel" style="font-family:var(--font-en);font-weight:700;">0%</span>
+            </div>
+        </div>
+
+        <aside class="controls-panel" id="controlsPanel">
+            <div class="panel-title">🎛️ أدوات التحسين</div>
+
+            <div class="preset-btns">
+                <button class="preset-btn active-preset" data-preset="auto">✨ تحسين تلقائي</button>
+                <button class="preset-btn" data-preset="vivid">🌈 ألوان زاهية</button>
+                <button class="preset-btn" data-preset="bw">⬛ أبيض وأسود</button>
+                <button class="preset-btn" data-preset="cinematic">🎬 سينمائي</button>
+                <button class="preset-btn" data-preset="portrait">👤 بورتريه</button>
+                <button class="preset-btn" data-preset="natural">🌿 طبيعي</button>
+                <button class="preset-btn" data-preset="dramatic">🌩️ درامي</button>
+                <button class="preset-btn" data-preset="vintage">📻 قديم دافئ</button>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">☀️ السطوع <span class="control-value" id="valBrightness">0</span></label>
+                <input type="range" id="sliderBrightness" min="-100" max="100" value="0" step="1">
+            </div>
+            <div class="control-group">
+                <label class="control-label">◑ التباين <span class="control-value" id="valContrast">0</span></label>
+                <input type="range" id="sliderContrast" min="-100" max="100" value="0" step="1">
+            </div>
+            <div class="control-group">
+                <label class="control-label">🎨 التشبع <span class="control-value" id="valSaturation">0</span></label>
+                <input type="range" id="sliderSaturation" min="-100" max="100" value="0" step="1">
+            </div>
+            <div class="control-group">
+                <label class="control-label">🔪 الحدة (Sharpen) <span class="control-value" id="valSharpen">0</span></label>
+                <input type="range" id="sliderSharpen" min="0" max="100" value="15" step="1">
+            </div>
+            <div class="control-group">
+                <label class="control-label">🧹 إزالة التشويش <span class="control-value" id="valDenoise">0</span></label>
+                <input type="range" id="sliderDenoise" min="0" max="100" value="0" step="1">
+            </div>
+            <div class="control-group">
+                <label class="control-label">💎 تحسين الألوان <span class="control-value" id="valVibrance">0</span></label>
+                <input type="range" id="sliderVibrance" min="0" max="100" value="10" step="1">
+            </div>
+            <div class="control-group">
+                <label class="control-label">📐 رفع الدقة (Scale) <span class="control-value" id="valScale">1x</span></label>
+                <input type="range" id="sliderScale" min="1" max="4" value="1" step="0.5">
+            </div>
+            <div class="control-group">
+                <label class="control-label">⬜ تدرج رمادي <span class="control-value" id="valGrayscale">0%</span></label>
+                <input type="range" id="sliderGrayscale" min="0" max="100" value="0" step="1">
+            </div>
+        </aside>
+    </div>
+
+    <footer class="app-footer">
+        تم التطوير بواسطة <strong>ImageEnhancer Pro</strong> • تعمل 100% داخل المتصفح • لا حاجة لخادم خارجي
+    </footer>
+</div>
+
+<div class="toast" id="toast"></div>
+<canvas id="processingCanvas" hidden></canvas>
+
+<script>
+    (function() {
+        // عناصر DOM
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const displayCanvas = document.getElementById('displayCanvas');
+        const processingCanvas = document.getElementById('processingCanvas');
+        const ctxDisplay = displayCanvas.getContext('2d', { alpha: true });
+        const ctxProc = processingCanvas.getContext('2d', { alpha: true });
+
+        const btnDarkMode = document.getElementById('btnDarkMode');
+        const btnCompare = document.getElementById('btnCompare');
+        const btnReset = document.getElementById('btnReset');
+        const btnDownloadPNG = document.getElementById('btnDownloadPNG');
+        const toast = document.getElementById('toast');
+        const qualityFillBar = document.getElementById('qualityFillBar');
+        const qualityLabel = document.getElementById('qualityLabel');
+        const qualityPercentSpan = document.getElementById('qualityPercent');
+        const qualityBadge = document.getElementById('qualityBadge');
+        const infoDimensions = document.getElementById('infoDimensions');
+        const infoSize = document.getElementById('infoSize');
+        const imageInfoBar = document.getElementById('imageInfoBar');
+
+        const sliderBrightness = document.getElementById('sliderBrightness');
+        const sliderContrast = document.getElementById('sliderContrast');
+        const sliderSaturation = document.getElementById('sliderSaturation');
+        const sliderSharpen = document.getElementById('sliderSharpen');
+        const sliderDenoise = document.getElementById('sliderDenoise');
+        const sliderVibrance = document.getElementById('sliderVibrance');
+        const sliderScale = document.getElementById('sliderScale');
+        const sliderGrayscale = document.getElementById('sliderGrayscale');
+
+        const valBrightness = document.getElementById('valBrightness');
+        const valContrast = document.getElementById('valContrast');
+        const valSaturation = document.getElementById('valSaturation');
+        const valSharpen = document.getElementById('valSharpen');
+        const valDenoise = document.getElementById('valDenoise');
+        const valVibrance = document.getElementById('valVibrance');
+        const valScale = document.getElementById('valScale');
+        const valGrayscale = document.getElementById('valGrayscale');
+
+        let originalImage = null;
+        let originalImageData = null;
+        let currentFilters = {};
+        let isDarkMode = false;
+        let compareMode = false;
+        let hasImage = false;
+        let toastTimer = null;
+
+        const defaultFilters = {
+            brightness: 0, contrast: 0, saturation: 0, sharpen: 15,
+            denoise: 0, vibrance: 10, scale: 1, grayscale: 0,
+        };
+
+        function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
+
+        function showToast(msg) {
+            if (toastTimer) clearTimeout(toastTimer);
+            toast.textContent = msg;
+            toast.classList.add('show');
+            toastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
+        }
+
+        function getFilterValues() {
+            return {
+                brightness: parseInt(sliderBrightness.value),
+                contrast: parseInt(sliderContrast.value),
+                saturation: parseInt(sliderSaturation.value),
+                sharpen: parseInt(sliderSharpen.value),
+                denoise: parseInt(sliderDenoise.value),
+                vibrance: parseInt(sliderVibrance.value),
+                scale: parseFloat(sliderScale.value),
+                grayscale: parseInt(sliderGrayscale.value),
+            };
+        }
+
+        function updateValueLabels(filters) {
+            valBrightness.textContent = filters.brightness;
+            valContrast.textContent = filters.contrast;
+            valSaturation.textContent = filters.saturation;
+            valSharpen.textContent = filters.sharpen;
+            valDenoise.textContent = filters.denoise;
+            valVibrance.textContent = filters.vibrance;
+            valScale.textContent = filters.scale.toFixed(1) + 'x';
+            valGrayscale.textContent = filters.grayscale + '%';
+        }
+
+        function calculateQualityScore(filters) {
+            let score = 0;
+            score += Math.abs(filters.brightness) * 0.08;
+            score += Math.abs(filters.contrast) * 0.1;
+            score += Math.abs(filters.saturation) * 0.08;
+            score += filters.sharpen * 0.35;
+            score += filters.denoise * 0.3;
+            score += filters.vibrance * 0.25;
+            score += (filters.scale - 1) * 18;
+            score += filters.grayscale * 0.02;
+            return Math.round(clamp(score, 0, 100));
+        }
+
+        function updateQualityUI(filters) {
+            const score = calculateQualityScore(filters);
+            qualityFillBar.style.width = score + '%';
+            qualityLabel.textContent = score + '%';
+            qualityPercentSpan.textContent = score + '%';
+            if (score >= 70) qualityBadge.textContent = '🔥 ممتازة ' + score + '%';
+            else if (score >= 35) qualityBadge.textContent = '⚡ جيدة ' + score + '%';
+            else if (score > 0) qualityBadge.textContent = '🔧 محسّنة ' + score + '%';
+            else qualityBadge.textContent = '📋 أصلية ' + score + '%';
+        }
+
+        // معالجة الألوان (HSL)
+        function rgbToHsl(r, g, b) {
+            r /= 255; g /= 255; b /= 255;
+            const max = Math.max(r, g, b), min = Math.min(r, g, b);
+            let h, s, l = (max + min) / 2;
+            if (max === min) { h = s = 0; } else {
+                const d = max - min;
+                s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+                switch (max) {
+                    case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
+                    case g: h = ((b - r) / d + 2) / 6; break;
+                    case b: h = ((r - g) / d + 4) / 6; break;
+                }
+            }
+            return { h: clamp(h, 0, 1), s: clamp(s, 0, 1), l: clamp(l, 0, 1) };
+        }
+
+        function hslToRgb(h, s, l) {
+            let r, g, b;
+            if (s === 0) { r = g = b = l; } else {
+                const hue2rgb = (p, q, t) => {
+                    if (t < 0) t += 1;
+                    if (t > 1) t -= 1;
+                    if (t < 1/6) return p + (q - p) * 6 * t;
+                    if (t < 1/2) return q;
+                    if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+                    return p;
+                };
+                const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+                const p = 2 * l - q;
+                r = hue2rgb(p, q, h + 1/3);
+                g = hue2rgb(p, q, h);
+                b = hue2rgb(p, q, h - 1/3);
+            }
+            return { r: clamp(Math.round(r * 255), 0, 255), g: clamp(Math.round(g * 255), 0, 255), b: clamp(Math.round(b * 255), 0, 255) };
+        }
+
+        function applyFiltersToImageData(imageData, filters) {
+            const data = imageData.data;
+            const width = imageData.width;
+            const height = imageData.height;
+            const totalPixels = width * height;
+            const working = new Uint8ClampedArray(data);
+
+            // Brightness
+            if (filters.brightness !== 0) {
+                const bVal = filters.brightness * 2.55;
+                for (let i = 0; i < totalPixels; i++) {
+                    const idx = i * 4;
+                    working[idx] = clamp(working[idx] + bVal, 0, 255);
+                    working[idx+1] = clamp(working[idx+1] + bVal, 0, 255);
+                    working[idx+2] = clamp(working[idx+2] + bVal, 0, 255);
+                }
+            }
+            // Contrast
+            if (filters.contrast !== 0) {
+                const factor = (259 * (filters.contrast + 255)) / (255 * (259 - filters.contrast));
+                for (let i = 0; i < totalPixels; i++) {
+                    const idx = i * 4;
+                    working[idx] = clamp(factor * (working[idx] - 128) + 128, 0, 255);
+                    working[idx+1] = clamp(factor * (working[idx+1] - 128) + 128, 0, 255);
+                    working[idx+2] = clamp(factor * (working[idx+2] - 128) + 128, 0, 255);
+                }
+            }
+            // Saturation
+            if (filters.saturation !== 0) {
+                const satFactor = 1 + filters.saturation / 100;
+                for (let i = 0; i < totalPixels; i++) {
+                    const idx = i * 4;
+                    const hsl = rgbToHsl(working[idx], working[idx+1], working[idx+2]);
+                    hsl.s = clamp(hsl.s * satFactor, 0, 1);
+                    const rgb = hslToRgb(hsl.h, hsl.s, hsl.l);
+                    working[idx] = rgb.r; working[idx+1] = rgb.g; working[idx+2] = rgb.b;
+                }
+            }
+            // Vibrance
+            if (filters.vibrance > 0) {
+                const vibFactor = 1 + filters.vibrance / 120;
+                for (let i = 0; i < totalPixels; i++) {
+                    const idx = i * 4;
+                    const hsl = rgbToHsl(working[idx], working[idx+1], working[idx+2]);
+                    const boost = (1 - hsl.s) * (vibFactor - 1) * 1.5;
+                    hsl.s = clamp(hsl.s + boost, 0, 1);
+                    const rgb = hslToRgb(hsl.h, hsl.s, hsl.l);
+                    working[idx] = rgb.r; working[idx+1] = rgb.g; working[idx+2] = rgb.b;
+                }
+            }
+            // Denoise (simple box blur with strength)
+            if (filters.denoise > 0) {
+                const strength = filters.denoise / 100;
+                const temp = new Uint8ClampedArray(working);
+                const kernelSize = filters.denoise > 50 ? 5 : 3;
+                const halfK = Math.floor(kernelSize / 2);
+                for (let y = halfK; y < height - halfK; y++) {
+                    for (let x = halfK; x < width - halfK; x++) {
+                        const idx = (y * width + x) * 4;
+                        let sumR = 0, sumG = 0, sumB = 0, count = 0;
+                        for (let ky = -halfK; ky <= halfK; ky++) {
+                            for (let kx = -halfK; kx <= halfK; kx++) {
+                                const nidx = ((y + ky) * width + (x + kx)) * 4;
+                                const weight = (kx === 0 && ky === 0) ? (1 - strength) * 9 : 1;
+                                sumR += temp[nidx] * weight;
+                                sumG += temp[nidx+1] * weight;
+                                sumB += temp[nidx+2] * weight;
+                                count += weight;
+                            }
+                        }
+                        working[idx] = clamp(Math.round(sumR / count), 0, 255);
+                        working[idx+1] = clamp(Math.round(sumG / count), 0, 255);
+                        working[idx+2] = clamp(Math.round(sumB / count), 0, 255);
+                    }
+                }
+            }
+            // Sharpen
+            if (filters.sharpen > 0) {
+                const strength = filters.sharpen / 100;
+                const temp = new Uint8ClampedArray(working);
+                const centerWeight = 1 + 4 * strength;
+                const neighborWeight = -strength;
+                for (let y = 1; y < height - 1; y++) {
+                    for (let x = 1; x < width - 1; x++) {
+                        for (let c = 0; c < 3; c++) {
+                            const idx = (y * width + x) * 4 + c;
+                            const top = temp[((y-1) * width + x) * 4 + c];
+                            const bottom = temp[((y+1) * width + x) * 4 + c];
+                            const left = temp[(y * width + (x-1)) * 4 + c];
+                            const right = temp[(y * width + (x+1)) * 4 + c];
+                            const center = temp[idx];
+                            let val = center * centerWeight + (top + bottom + left + right) * neighborWeight;
+                            working[idx] = clamp(Math.round(val), 0, 255);
+                        }
+                    }
+                }
+            }
+            // Grayscale
+            if (filters.grayscale > 0) {
+                const gsFactor = filters.grayscale / 100;
+                for (let i = 0; i < totalPixels; i++) {
+                    const idx = i * 4;
+                    const gray = working[idx] * 0.299 + working[idx+1] * 0.587 + working[idx+2] * 0.114;
+                    working[idx] = clamp(working[idx] + (gray - working[idx]) * gsFactor, 0, 255);
+                    working[idx+1] = clamp(working[idx+1] + (gray - working[idx+1]) * gsFactor, 0, 255);
+                    working[idx+2] = clamp(working[idx+2] + (gray - working[idx+2]) * gsFactor, 0, 255);
+                }
+            }
+            return new ImageData(working, width, height);
+        }
+
+        function processAndDisplay() {
+            if (!originalImageData || !hasImage) return;
+            const filters = getFilterValues();
+            currentFilters = filters;
+            updateValueLabels(filters);
+            updateQualityUI(filters);
+
+            const scale = filters.scale;
+            const newWidth = Math.round(originalImage.width * scale);
+            const newHeight = Math.round(originalImage.height * scale);
+
+            processingCanvas.width = newWidth;
+            processingCanvas.height = newHeight;
+            ctxProc.clearRect(0, 0, newWidth, newHeight);
+            ctxProc.imageSmoothingEnabled = true;
+            ctxProc.imageSmoothingQuality = 'high';
+            ctxProc.drawImage(originalImage, 0, 0, newWidth, newHeight);
+
+            const scaledImageData = ctxProc.getImageData(0, 0, newWidth, newHeight);
+            const enhancedData = applyFiltersToImageData(scaledImageData, filters);
+            ctxProc.putImageData(enhancedData, 0, 0);
+
+            displayCanvas.width = newWidth;
+            displayCanvas.height = newHeight;
+            ctxDisplay.clearRect(0, 0, newWidth, newHeight);
+            if (compareMode) {
+                ctxDisplay.drawImage(originalImage, 0, 0, newWidth, newHeight);
+            } else {
+                ctxDisplay.drawImage(processingCanvas, 0, 0);
+            }
+            infoDimensions.textContent = newWidth + ' × ' + newHeight + ' px';
+        }
+
+        function loadImageFromFile(file) {
+            if (!file || !file.type.match(/image\/(jpeg|png|webp|bmp|gif)/i)) {
+                showToast('⚠️ يرجى اختيار ملف صورة صالح (JPG, PNG, WEBP)');
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const megapixels = (img.width * img.height) / 1000000;
+                    if (megapixels > 20) {
+                        showToast('⚠️ حجم الصورة كبير جداً (>20MP). يرجى اختيار صورة أصغر.');
+                        return;
+                    }
+                    originalImage = img;
+                    hasImage = true;
+                    processingCanvas.width = img.width;
+                    processingCanvas.height = img.height;
+                    ctxProc.clearRect(0, 0, img.width, img.height);
+                    ctxProc.drawImage(img, 0, 0);
+                    originalImageData = ctxProc.getImageData(0, 0, img.width, img.height);
+                    dropZone.classList.add('has-image');
+                    imageInfoBar.style.display = 'flex';
+                    infoSize.textContent = formatFileSize(file.size);
+                    resetAllSliders();
+                    currentFilters = getFilterValues();
+                    updateValueLabels(currentFilters);
+                    updateQualityUI(currentFilters);
+                    compareMode = false;
+                    processAndDisplay();
+                    showToast('✅ تم تحميل الصورة بنجاح!');
+                };
+                img.onerror = () => showToast('❌ فشل في تحميل الصورة. حاول مرة أخرى.');
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+            return (bytes / 1048576).toFixed(2) + ' MB';
+        }
+
+        function resetAllSliders() {
+            sliderBrightness.value = defaultFilters.brightness;
+            sliderContrast.value = defaultFilters.contrast;
+            sliderSaturation.value = defaultFilters.saturation;
+            sliderSharpen.value = defaultFilters.sharpen;
+            sliderDenoise.value = defaultFilters.denoise;
+            sliderVibrance.value = defaultFilters.vibrance;
+            sliderScale.value = defaultFilters.scale;
+            sliderGrayscale.value = defaultFilters.grayscale;
+            updateValueLabels(defaultFilters);
+            updateQualityUI(defaultFilters);
+            document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active-preset'));
+            const autoBtn = document.querySelector('[data-preset="auto"]');
+            if (autoBtn) autoBtn.classList.add('active-preset');
+        }
+
+        function resetToOriginal() {
+            if (!hasImage || !originalImage) return;
+            resetAllSliders();
+            compareMode = false;
+            currentFilters = getFilterValues();
+            processAndDisplay();
+            showToast('↺ تمت إعادة الصورة إلى وضعها المحسّن الافتراضي');
+        }
+
+        function applyPreset(presetName) {
+            if (!hasImage) return;
+            document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active-preset'));
+            const targetBtn = document.querySelector(`[data-preset="${presetName}"]`);
+            if (targetBtn) targetBtn.classList.add('active-preset');
+
+            switch (presetName) {
+                case 'auto':
+                    sliderBrightness.value = 0; sliderContrast.value = 5; sliderSaturation.value = 8;
+                    sliderSharpen.value = 20; sliderDenoise.value = 8; sliderVibrance.value = 15;
+                    sliderScale.value = 1; sliderGrayscale.value = 0;
+                    break;
+                case 'vivid':
+                    sliderBrightness.value = 10; sliderContrast.value = 25; sliderSaturation.value = 45;
+                    sliderSharpen.value = 30; sliderDenoise.value = 5; sliderVibrance.value = 40;
+                    sliderScale.value = 1; sliderGrayscale.value = 0;
+                    break;
+                case 'bw':
+                    sliderBrightness.value = 5; sliderContrast.value = 35; sliderSaturation.value = -100;
+                    sliderSharpen.value = 40; sliderDenoise.value = 15; sliderVibrance.value = 0;
+                    sliderScale.value = 1; sliderGrayscale.value = 100;
+                    break;
+                case 'cinematic':
+                    sliderBrightness.value = -8; sliderContrast.value = 40; sliderSaturation.value = -15;
+                    sliderSharpen.value = 50; sliderDenoise.value = 20; sliderVibrance.value = 20;
+                    sliderScale.value = 1.5; sliderGrayscale.value = 15;
+                    break;
+                case 'portrait':
+                    // نعومة البشرة وتوهج خفيف
+                    sliderBrightness.value = 5; sliderContrast.value = -5; sliderSaturation.value = 5;
+                    sliderSharpen.value = 12; sliderDenoise.value = 35; sliderVibrance.value = 12;
+                    sliderScale.value = 1; sliderGrayscale.value = 0;
+                    break;
+                case 'natural':
+                    // تحسين متوازن
+                    sliderBrightness.value = 2; sliderContrast.value = 8; sliderSaturation.value = 12;
+                    sliderSharpen.value = 25; sliderDenoise.value = 10; sliderVibrance.value = 18;
+                    sliderScale.value = 1; sliderGrayscale.value = 0;
+                    break;
+                case 'dramatic':
+                    // تباين قوي وألوان عميقة
+                    sliderBrightness.value = -5; sliderContrast.value = 55; sliderSaturation.value = 25;
+                    sliderSharpen.value = 60; sliderDenoise.value = 15; sliderVibrance.value = 25;
+                    sliderScale.value = 1; sliderGrayscale.value = 0;
+                    break;
+                case 'vintage':
+                    // تأثير دافئ قديم
+                    sliderBrightness.value = -2; sliderContrast.value = 20; sliderSaturation.value = -10;
+                    sliderSharpen.value = 30; sliderDenoise.value = 18; sliderVibrance.value = 5;
+                    sliderScale.value = 1; sliderGrayscale.value = 8;
+                    break;
+                default: return;
+            }
+            compareMode = false;
+            currentFilters = getFilterValues();
+            updateValueLabels(currentFilters);
+            updateQualityUI(currentFilters);
+            processAndDisplay();
+            showToast('🎯 تم تطبيق الإعداد المسبق: ' + presetName);
+        }
+
+        function downloadImage(format = 'png') {
+            if (!hasImage) { showToast('⚠️ يرجى تحميل صورة أولاً'); return; }
+            const filters = currentFilters || getFilterValues();
+            const scale = filters.scale;
+            const finalWidth = Math.round(originalImage.width * scale);
+            const finalHeight = Math.round(originalImage.height * scale);
+            const tempCanvas = document.createElement('canvas');
+            tempCanvas.width = finalWidth;
+            tempCanvas.height = finalHeight;
+            const tempCtx = tempCanvas.getContext('2d', { alpha: true });
+            tempCtx.imageSmoothingEnabled = true;
+            tempCtx.imageSmoothingQuality = 'high';
+            tempCtx.drawImage(originalImage, 0, 0, finalWidth, finalHeight);
+            const scaledData = tempCtx.getImageData(0, 0, finalWidth, finalHeight);
+            const enhancedData = applyFiltersToImageData(scaledData, filters);
+            tempCtx.putImageData(enhancedData, 0, 0);
+            const mimeType = format === 'jpg' ? 'image/jpeg' : 'image/png';
+            const quality = format === 'jpg' ? 0.92 : undefined;
+            const dataURL = tempCanvas.toDataURL(mimeType, quality);
+            const link = document.createElement('a');
+            link.download = 'enhanced_image.' + (format === 'jpg' ? 'jpg' : 'png');
+            link.href = dataURL;
+            link.click();
+            showToast('📥 تم تحميل الصورة بصيغة ' + format.toUpperCase());
+        }
+
+        // أحداث السحب والإفلات
+        dropZone.addEventListener('click', (e) => {
+            if (hasImage && e.target === displayCanvas) return;
+            fileInput.click();
+        });
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files && e.target.files[0]) loadImageFromFile(e.target.files[0]);
+            fileInput.value = '';
+        });
+        dropZone.addEventListener('dragover', (e) => { e.preventDefault(); e.stopPropagation(); if (!hasImage) dropZone.classList.add('drag-over'); });
+        dropZone.addEventListener('dragleave', (e) => { e.preventDefault(); e.stopPropagation(); dropZone.classList.remove('drag-over'); });
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault(); e.stopPropagation(); dropZone.classList.remove('drag-over');
+            if (e.dataTransfer.files && e.dataTransfer.files[0]) loadImageFromFile(e.dataTransfer.files[0]);
+        });
+        displayCanvas.addEventListener('dblclick', () => fileInput.click());
+
+        // المقارنة
+        btnCompare.addEventListener('mousedown', () => { if (hasImage) { compareMode = true; processAndDisplay(); } });
+        btnCompare.addEventListener('mouseup', () => { compareMode = false; processAndDisplay(); });
+        btnCompare.addEventListener('mouseleave', () => { compareMode = false; processAndDisplay(); });
+        btnCompare.addEventListener('touchstart', (e) => { e.preventDefault(); if (hasImage) { compareMode = true; processAndDisplay(); } });
+        btnCompare.addEventListener('touchend', (e) => { e.preventDefault(); compareMode = false; processAndDisplay(); });
+        btnCompare.addEventListener('touchcancel', () => { compareMode = false; processAndDisplay(); });
+
+        btnReset.addEventListener('click', resetToOriginal);
+        btnDownloadPNG.addEventListener('click', () => downloadImage('png'));
+        let longPressTimer;
+        btnDownloadPNG.addEventListener('mousedown', () => { longPressTimer = setTimeout(() => downloadImage('jpg'), 800); });
+        btnDownloadPNG.addEventListener('mouseup', () => clearTimeout(longPressTimer));
+        btnDownloadPNG.addEventListener('mouseleave', () => clearTimeout(longPressTimer));
+        btnDownloadPNG.addEventListener('touchstart', () => { longPressTimer = setTimeout(() => downloadImage('jpg'), 800); });
+        btnDownloadPNG.addEventListener('touchend', () => clearTimeout(longPressTimer));
+
+        // الوضع الليلي
+        btnDarkMode.addEventListener('click', () => {
+            isDarkMode = !isDarkMode;
+            if (isDarkMode) {
+                document.body.classList.add('dark-mode');
+                btnDarkMode.textContent = '☀️';
+                btnDarkMode.classList.add('active');
+            } else {
+                document.body.classList.remove('dark-mode');
+                btnDarkMode.textContent = '🌙';
+                btnDarkMode.classList.remove('active');
+            }
+            try { localStorage.setItem('image-enhancer-dark-mode', isDarkMode ? '1' : '0'); } catch(e) {}
+        });
+        try {
+            const savedDark = localStorage.getItem('image-enhancer-dark-mode');
+            if (savedDark === '1') {
+                isDarkMode = true;
+                document.body.classList.add('dark-mode');
+                btnDarkMode.textContent = '☀️';
+                btnDarkMode.classList.add('active');
+            }
+        } catch(e) {}
+
+        // أحداث الشرائح
+        let debounceTimer;
+        const allSliders = [sliderBrightness, sliderContrast, sliderSaturation, sliderSharpen, sliderDenoise, sliderVibrance, sliderScale, sliderGrayscale];
+        function onSliderChange() {
+            if (!hasImage) return;
+            document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active-preset'));
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                compareMode = false;
+                currentFilters = getFilterValues();
+                updateValueLabels(currentFilters);
+                updateQualityUI(currentFilters);
+                processAndDisplay();
+            }, 40);
+        }
+        allSliders.forEach(slider => {
+            slider.addEventListener('input', onSliderChange);
+            slider.addEventListener('change', () => {
+                clearTimeout(debounceTimer);
+                compareMode = false;
+                currentFilters = getFilterValues();
+                updateValueLabels(currentFilters);
+                updateQualityUI(currentFilters);
+                processAndDisplay();
+            });
+        });
+
+        document.querySelectorAll('.preset-btn').forEach(btn => {
+            btn.addEventListener('click', () => { if (btn.dataset.preset) applyPreset(btn.dataset.preset); });
+        });
+
+        window.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === 's') { e.preventDefault(); downloadImage('png'); }
+            else if (e.ctrlKey && e.key === 'd') { e.preventDefault(); isDarkMode = !isDarkMode; document.body.classList.toggle('dark-mode', isDarkMode); btnDarkMode.textContent = isDarkMode ? '☀️' : '🌙'; if (isDarkMode) btnDarkMode.classList.add('active'); else btnDarkMode.classList.remove('active'); try { localStorage.setItem('image-enhancer-dark-mode', isDarkMode ? '1' : '0'); } catch(e) {} }
+            else if (e.key === 'r' && !e.ctrlKey && !e.metaKey) resetToOriginal();
+        });
+
+        // التهيئة (تم إزالة displayCanvas.style.display = 'none' الخاطئ)
+        function init() {
+            resetAllSliders();
+            updateQualityUI(defaultFilters);
+            qualityFillBar.style.width = '0%';
+            qualityLabel.textContent = '0%';
+            qualityPercentSpan.textContent = '0%';
+            imageInfoBar.style.display = 'none';
+            dropZone.classList.remove('has-image');
+            // لا نغير displayCanvas.style.display مباشرةً - يعتمد على class فقط
+            hasImage = false;
+            originalImage = null;
+            originalImageData = null;
+            compareMode = false;
+        }
+        init();
+        console.log('✨ محسّن الصور الاحترافي جاهز | Image Enhancer Pro Ready');
+    })();
+</script>
+</body>
+</html>
